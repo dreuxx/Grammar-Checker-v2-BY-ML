@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Grammar Checker- Multi-Language Grammar Correction",
-    "version": "1.8",
+    "version": "1.89",
     "description": "Revisa y mejora la gramática y puntuación de un texto usando OpenAI",
     "permissions": [
       "storage"
