@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Checker ML</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/node-nlp/dist/nlp.min.js"></script>
+</head>
+<body>
+    <div class="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 id="grammar-checker" class="text-2xl font-bold mb-4">Grammar Checker</h1>
+        
+        <!-- Indicador de carga de modelo -->
+        <div id="modelLoadingStatus" class="mb-4 p-2 bg-blue-50 text-blue-700 rounded">
+            <div class="animate-pulse flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <span>Cargando modelos de lenguaje...</span>
+            </div>
+        </div>
+
+        <textarea id="inputText" rows="5" class="w-full p-2 border rounded mb-4" placeholder="Ingrese su texto aquí"></textarea>
+        
+        <div class="flex space-x-2 mb-4">
+            <button id="checkButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                Revisar gramática
+            </button>
+            <button id="clearButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                Limpiar
+            </button>
+        </div>
+        
+        <div id="loadingIndicator" class="hidden">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto" aria-label="Cargando"></div>
+        </div>
+        
+        <div id="outputText" class="mt-4 p-3 bg-gray-50 rounded" aria-live="polite"></div>
+        
+        <button id="copyButton" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded hidden">
+            Copiar texto corregido
+        </button>
+
+        <div class="mt-4 text-xs text-gray-500">
+            Esta versión utiliza machine learning local y no requiere API externa.
+        </div>
+    </div>
+
+    <!-- Scripts principales (empaquetados con webpack) -->
+    <script src="vendors.bundle.js"></script>
+    <script src="popup.bundle.js"></script>
+</body>
+</html>
