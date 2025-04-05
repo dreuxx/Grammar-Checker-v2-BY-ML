@@ -1,0 +1,119 @@
+:root {
+    --primary-color: #4CAF50;
+    --primary-hover: #45a049;
+    --danger-color: #f44336;
+    --danger-hover: #da190b;
+    --text-color: #333;
+    --border-color: #ddd;
+    --bg-color: #f0f0f0;
+    --white: #fff;
+    --correction-bg: #fff9c4;
+    --correction-border: #ffd54f;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    width: 350px;
+    padding: 15px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.container {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#languageSelect, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+#checkButton, #clearButton {
+    color: var(--white);
+}
+
+#checkButton {
+    background-color: var(--primary-color);
+}
+
+#checkButton:hover {
+    background-color: var(--primary-hover);
+}
+
+#clearButton {
+    background-color: var(--danger-color);
+}
+
+#clearButton:hover {
+    background-color: var(--danger-hover);
+}
+
+#outputText {
+    margin-top: 15px;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: var(--white);
+    border-radius: 4px;
+}
+
+.correction {
+    background-color: var(--correction-bg);
+    cursor: pointer;
+    padding: 2px 0;
+    border-bottom: 1px dashed var(--correction-border);
+}
+
+#statusMessage {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#statusMessage.error {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+#statusMessage.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+#statusMessage.info {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
