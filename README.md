@@ -1,7 +1,7 @@
 # ✨ Grammar Checker v2 (Powered by ML — No API Required) in PROGRESS
 
 **Grammar Checker** is a Chrome extension that reviews and improves grammar and spelling in multiple languages using built-in **machine learning models**, **no API key required**.
-
+ ## 🧠 Natural Language Processing
 ---
 
 ## 🚀 Features
