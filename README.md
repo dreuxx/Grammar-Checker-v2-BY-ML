@@ -1,5 +1,7 @@
 # Mejora: Grammar Checker v2
+
 **Project Status:** In Development
+
 **Version:** 2.0.0
 **Language:** English, Spanish, French, German, Russian
 
