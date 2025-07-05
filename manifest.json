@@ -1,0 +1,95 @@
+{
+  "manifest_version": 3,
+  "name": "Grammar Checker Pro - AI Writing Assistant",
+  "version": "2.0.0",
+  "description": "AI-powered grammar, spelling, and style checker for 5 languages",
+  
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "tabs",
+    "notifications",
+    "alarms",
+    "unlimitedStorage",
+    "offscreen"
+  ],
+  
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "lib/diff-match-patch.js",
+        "content/text-detector.js",
+        "content/highlighter.js",
+        "content/suggestion-card.js",
+        "content/floating-button.js",
+        "content/content-main.js"
+      ],
+      "css": [
+        "content/styles/content.css",
+        "content/styles/suggestion-card.css",
+        "content/styles/animations.css"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    }
+  },
+  
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "models/*",
+        "lib/*",
+        "assets/*",
+        "editor/editor.html",
+        "content/styles/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  
+  "commands": {
+    "toggle-checker": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+G",
+        "mac": "Command+Shift+G"
+      },
+      "description": "Toggle grammar checker"
+    },
+    "open-editor": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Open editor"
+    }
+  }
+}

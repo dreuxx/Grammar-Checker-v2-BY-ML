@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Checker Pro</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <!-- Header -->
+        <div class="popup-header">
+            <div class="logo">
+                <img src="../assets/icons/icon-48.png" alt="Grammar Checker">
+                <h1>Grammar Checker Pro</h1>
+            </div>
+            <button id="settings-btn" class="icon-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path d="M10 4a6 6 0 00-6 6 6 6 0 006 6 6 6 0 006-6 6 6 0 00-6-6zm0 10a4 4 0 110-8 4 4 0 010 8z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Site Control -->
+        <div class="site-control">
+            <div class="site-info">
+                <span class="site-label">Checking on</span>
+                <span id="site-name" class="site-name">example.com</span>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="toggle-switch">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        
+        <!-- Status -->
+        <div class="status-bar">
+            <span class="status-label">Status:</span>
+            <span id="status" class="status active">Active</span>
+        </div>
+        
+        <!-- Controls -->
+        <div id="controls" class="controls">
+            <!-- Language Selector -->
+            <div class="control-group">
+                <label for="language-select">Language:</label>
+                <select id="language-select" class="select">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="ru">Русский</option>
+                </select>
+            </div>
+            
+            <!-- Actions -->
+            <div class="actions">
+                <button id="check-page-btn" class="btn btn-primary">
+                    Check This Page
+                </button>
+                <button id="open-editor-btn" class="btn btn-secondary">
+                    Open Editor
+                </button>
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats">
+            <h2>This Week</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <span class="stat-value" id="errors-found">0</span>
+                    <span class="stat-label">Errors Found</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="corrections-made">0</span>
+                    <span class="stat-label">Corrections</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="words-checked">0</span>
+                    <span class="stat-label">Words</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="accuracy">100%</span>
+                    <span class="stat-label">Accuracy</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="popup-footer">
+            <a href="#" id="help-link">Help</a>
+            <span>•</span>
+            <a href="#" id="feedback-link">Feedback</a>
+            <span>•</span>
+            <span class="version">v2.0.0</span>
+        </div>
+        
+        <!-- Toast -->
+        <div id="toast" class="toast"></div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

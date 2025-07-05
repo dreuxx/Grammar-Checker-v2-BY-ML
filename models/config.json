@@ -1,0 +1,15 @@
+{
+  "model_type": "mt5",
+  "languages": [
+    "en",
+    "es",
+    "fr",
+    "de",
+    "ru"
+  ],
+  "max_length": 256,
+  "model_files": {
+    "encoder": "encoder_model_int8.onnx",
+    "decoder": "decoder_model_int8.onnx"
+  }
+}

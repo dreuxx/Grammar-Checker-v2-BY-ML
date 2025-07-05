@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Editor Pro</title>
+    <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+    <div class="editor-container">
+        <!-- Header -->
+        <header class="editor-header">
+            <div class="header-left">
+                <h1>Grammar Editor Pro</h1>
+                <select id="language-select" class="language-select">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="ru">Русский</option>
+                </select>
+            </div>
+            <div class="header-right">
+                <button id="analyze-btn" class="btn btn-primary">
+                    <span class="icon">✓</span> Analyze
+                </button>
+                <button id="clear-btn" class="btn btn-secondary">
+                    <span class="icon">✗</span> Clear
+                </button>
+                <button id="export-btn" class="btn btn-secondary">
+                    <span class="icon">↓</span> Export
+                </button>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="editor-main">
+            <!-- Editor -->
+            <div class="editor-wrapper">
+                <div id="editor" class="editor" contenteditable="true" placeholder="Start typing or paste your text here..."></div>
+            </div>
+            
+            <!-- Sidebar -->
+            <aside id="sidebar" class="sidebar">
+                <!-- Stats Panel -->
+                <div id="stats-panel" class="panel">
+                    <h3>Document Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="word-count">0</span>
+                            <span class="stat-label">Words</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="char-count">0</span>
+                            <span class="stat-label">Characters</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="sentence-count">0</span>
+                            <span class="stat-label">Sentences</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="reading-time">0 min</span>
+                            <span class="stat-label">Reading Time</span>
+                        </div>
+                    </div>
+                    <div class="score-container">
+                        <span class="score-label">Writing Score</span>
+                        <span class="score" id="writing-score">100</span>
+                    </div>
+                </div>
+                
+                <!-- Goals Panel -->
+                <div id="goals-panel" class="panel">
+                    <h3>Writing Goals</h3>
+                    <div class="goals-section">
+                        <h4>Tone</h4>
+                        <div class="goal-options">
+                            <label>
+                                <input type="radio" name="tone" value="formal" class="goal-selector">
+                                <span>Formal</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="tone" value="neutral" class="goal-selector" checked>
+                                <span>Neutral</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="tone" value="informal" class="goal-selector">
+                                <span>Informal</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="goals-section">
+                        <h4>Audience</h4>
+                        <div class="goal-options">
+                            <label>
+                                <input type="radio" name="audience" value="general" class="goal-selector" checked>
+                                <span>General</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="audience" value="academic" class="goal-selector">
+                                <span>Academic</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="audience" value="business" class="goal-selector">
+                                <span>Business</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Errors Panel -->
+                <div id="errors-panel" class="panel">
+                    <h3>Issues Found</h3>
+                    <div id="errors-list" class="errors-list"></div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div id="loading" class="loading-overlay">
+            <div class="spinner"></div>
+            <span>Analyzing text...</span>
+        </div>
+    </div>
+    
+    <script src="editor.js"></script>
+</body>
+</html>
