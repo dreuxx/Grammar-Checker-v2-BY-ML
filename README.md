@@ -2,7 +2,7 @@
 
 [![Project Status: In Development](https://img.shields.io/badge/status-in_development-yellowgreen.svg)](https://github.com/dreuxx/Grammar-Checker-v2-BY-ML)
 [![Version: 2.0.0](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/dreuxx/Grammar-Checker-v2-BY-ML)
-[![Language: Spanish](https://img.shields.io/badge/language-Spanish-red.svg)](https://github.com/dreuxx/Grammar-Checker-v2-BY-ML)
+[![Language: Spanish, English, French, German, Russian](https://img.shields.io/badge/language-Spanish-red.svg)](https://github.com/dreuxx/Grammar-Checker-v2-BY-ML)
 
 **Mejora** is a browser extension for real-time grammar correction powered by a fine-tuned mT5-LoRA model. It provides support for five languages directly within your browser's text fields.
 
