@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Grammar Checker Pro</title>
+    <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+    <main class="onboarding-container">
+        <!-- Progress Bar -->
+        <header class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+            <div class="progress-dots" role="tablist" aria-label="Onboarding steps">
+                <span class="progress-dot active" role="tab" aria-selected="true" aria-controls="step-welcome" id="tab-welcome" data-step="0"></span>
+                <span class="progress-dot" role="tab" aria-selected="false" aria-controls="step-permissions" id="tab-permissions" data-step="1"></span>
+                <span class="progress-dot" role="tab" aria-selected="false" aria-controls="step-features" id="tab-features" data-step="2"></span>
+                <span class="progress-dot" role="tab" aria-selected="false" aria-controls="step-customization" id="tab-customization" data-step="3"></span>
+                <span class="progress-dot" role="tab" aria-selected="false" aria-controls="step-ready" id="tab-ready" data-step="4"></span>
+            </div>
+        </header>
+
+        <!-- Step 1: Welcome -->
+        <div class="step active" role="tabpanel" aria-labelledby="tab-welcome" id="step-welcome">
+            <div class="step-content">
+                <div class="icon-container">
+                    <img src="../assets/icons/icon-128.png" alt="Grammar Checker Pro">
+                </div>
+                <h1>Welcome to Grammar Checker Pro</h1>
+                <p class="subtitle">Your AI-powered writing assistant for perfect grammar in 5 languages</p>
+                
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">✨</span>
+                        <span class="feature-text">Real-time corrections</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🌍</span>
+                        <span class="feature-text">5 languages</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <span class="feature-text">Writing goals</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span class="feature-text">Detailed analytics</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Permissions -->
+        <div class="step" role="tabpanel" aria-labelledby="tab-permissions" id="step-permissions">
+            <div class="step-content">
+                <div class="icon-container">
+                    <span class="step-icon">🔒</span>
+                </div>
+                <h2>Quick Setup</h2>
+                <p class="subtitle">Grammar Checker Pro needs your permission to work on all websites</p>
+                
+                <div class="permissions-info">
+                    <div class="permission-item">
+                        <span class="permission-icon">✓</span>
+                        <div class="permission-text">
+                            <h4>Check grammar on any website</h4>
+                            <p>Works in Gmail, Google Docs, social media, and more</p>
+                        </div>
+                    </div>
+                    <div class="permission-item">
+                        <span class="permission-icon">✓</span>
+                        <div class="permission-text">
+                            <h4>Save your preferences</h4>
+                            <p>Remember your language and writing goals</p>
+                        </div>
+                    </div>
+                    <div class="permission-item">
+                        <span class="permission-icon">✓</span>
+                        <div class="permission-text">
+                            <h4>Show notifications</h4>
+                            <p>Optional alerts for writing improvements</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-primary large" id="grant-permissions-btn">
+                    Grant Permissions
+                </button>
+                
+                <p class="privacy-note">
+                    🔐 We respect your privacy. No text is stored or sent to external servers.
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 3: Features -->
+        <div class="step" role="tabpanel" aria-labelledby="tab-features" id="step-features">
+            <div class="step-content">
+                <h2>Powerful Features</h2>
+                <p class="subtitle">Everything you need for perfect writing</p>
+                
+                <div class="features-showcase">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <span class="feature-emoji">🔍</span>
+                            <h3>Smart Detection</h3>
+                        </div>
+                        <p>Automatically detects text fields and checks grammar as you type</p>
+                        <img src="../assets/demo/detection.gif" alt="Smart detection demo" class="feature-demo">
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <span class="feature-emoji">💡</span>
+                            <h3>Instant Suggestions</h3>
+                        </div>
+                        <p>Get real-time corrections for spelling, grammar, and style</p>
+                        <img src="../assets/demo/suggestions.gif" alt="Suggestions demo" class="feature-demo">
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <span class="feature-emoji">📝</span>
+                            <h3>Advanced Editor</h3>
+                        </div>
+                        <p>Full-featured editor with goals, analytics, and insights</p>
+                        <img src="../assets/demo/editor.png" alt="Editor preview" class="feature-demo">
+                    </div>
+                </div>
+                
+                <div class="keyboard-shortcuts">
+                    <h4>Keyboard Shortcuts</h4>
+                    <div class="shortcut-list">
+                        <div class="shortcut">
+                            <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>
+                            <span>Toggle grammar checker</span>
+                        </div>
+                        <div class="shortcut">
+                            <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>
+                            <span>Open editor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Customization -->
+        <div class="step" role="tabpanel" aria-labelledby="tab-customization" id="step-customization">
+            <div class="step-content">
+                <h2>Personalize Your Experience</h2>
+                <p class="subtitle">Set up Grammar Checker Pro to match your writing style</p>
+                
+                <div class="customization-options">
+                    <div class="option-group">
+                        <label>Primary Language</label>
+                        <select id="language-select" class="form-select">
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                            <option value="ru">Русский</option>
+                        </select>
+                        <p id="language-preview" class="language-preview">
+                            Grammar Checker is ready to help you write better.
+                        </p>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>Writing Goals</label>
+                        <div class="goal-cards">
+                            <label class="goal-card">
+                                <input type="radio" name="goal" value="general" checked>
+                                <div class="goal-content">
+                                    <span class="goal-icon">📝</span>
+                                    <span class="goal-label">General Writing</span>
+                                </div>
+                            </label>
+                            <label class="goal-card">
+                                <input type="radio" name="goal" value="academic">
+                                <div class="goal-content">
+                                    <span class="goal-icon">🎓</span>
+                                    <span class="goal-label">Academic</span>
+                                </div>
+                            </label>
+                            <label class="goal-card">
+                                <input type="radio" name="goal" value="business">
+                                <div class="goal-content">
+                                    <span class="goal-icon">💼</span>
+                                    <span class="goal-label">Business</span>
+                                </div>
+                            </label>
+                            <label class="goal-card">
+                                <input type="radio" name="goal" value="creative">
+                                <div class="goal-content">
+                                    <span class="goal-icon">🎨</span>
+                                    <span class="goal-label">Creative</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>Checking Options</label>
+                        <div class="checkbox-list">
+                            <label class="checkbox-item">
+                                <input type="checkbox" checked>
+                                <span>Check spelling</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" checked>
+                                <span>Check grammar</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" checked>
+                                <span>Check punctuation</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" checked>
+                                <span>Style suggestions</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Ready -->
+        <div class="step" role="tabpanel" aria-labelledby="tab-ready" id="step-ready">
+            <div class="step-content">
+                <div class="success-animation">
+                    <div class="checkmark-circle">
+                        <svg class="checkmark" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <h2>You're All Set!</h2>
+                <p class="subtitle">Grammar Checker Pro is ready to improve your writing</p>
+                
+                <div class="quick-tips">
+                    <h4>Quick Tips to Get Started</h4>
+                    <div class="tip-list">
+                        <div class="tip-item">
+                            <span class="tip-number">1</span>
+                            <p>Look for the floating button on any webpage with text fields</p>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-number">2</span>
+                            <p>Click on underlined errors to see suggestions</p>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-number">3</span>
+                            <p>Use the editor for longer documents and detailed analysis</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="final-actions">
+                    <button class="btn-primary large" id="get-started-btn">
+                        Start Writing Better
+                    </button>
+                    
+                    <div class="additional-links">
+                        <a href="#" class="link">Watch tutorial</a>
+                        <span class="separator">•</span>
+                        <a href="#" class="link">Read documentation</a>
+                        <span class="separator">•</span>
+                        <a href="#" class="link">Join community</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <button class="nav-btn" id="prev-btn" style="display: none;">
+                ← Previous
+            </button>
+            <button class="nav-btn" id="skip-btn">
+                Skip
+            </button>
+            <button class="nav-btn primary" id="next-btn">
+                Next →
+            </button>
+        </nav>
+    </main>
+    
+    <script src="welcome.js"></script>
+</body>
+</html>

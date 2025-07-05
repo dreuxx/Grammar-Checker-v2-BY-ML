@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Checker Pro - Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="options-container">
+        <!-- Header -->
+        <header class="options-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="../assets/icons/icon-48.png" alt="Grammar Checker Pro">
+                    <h1>Grammar Checker Pro Settings</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary" id="export-btn">Export Settings</button>
+                    <button class="btn-secondary" id="import-btn">Import Settings</button>
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="options-main">
+            <!-- Sidebar -->
+            <aside class="options-sidebar">
+                <nav class="sidebar-nav" role="tablist" aria-label="Settings categories">
+                    <button class="tab-btn active" id="tab-general" role="tab" aria-controls="general-tab" aria-selected="true" data-tab="general">
+                        <span class="tab-icon">⚙️</span>
+                        <span class="tab-label">General</span>
+                    </button>
+                    <button class="tab-btn" id="tab-checking" role="tab" aria-controls="checking-tab" aria-selected="false" data-tab="checking">
+                        <span class="tab-icon">✓</span>
+                        <span class="tab-label">Checking Options</span>
+                    </button>
+                    <button class="tab-btn" id="tab-goals" role="tab" aria-controls="goals-tab" aria-selected="false" data-tab="goals">
+                        <span class="tab-icon">🎯</span>
+                        <span class="tab-label">Writing Goals</span>
+                    </button>
+                    <button class="tab-btn" id="tab-appearance" role="tab" aria-controls="appearance-tab" aria-selected="false" data-tab="appearance">
+                        <span class="tab-icon">🎨</span>
+                        <span class="tab-label">Appearance</span>
+                    </button>
+                    <button class="tab-btn" id="tab-sites" role="tab" aria-controls="sites-tab" aria-selected="false" data-tab="sites">
+                        <span class="tab-icon">🌐</span>
+                        <span class="tab-label">Sites</span>
+                    </button>
+                    <button class="tab-btn" id="tab-dictionary" role="tab" aria-controls="dictionary-tab" aria-selected="false" data-tab="dictionary">
+                        <span class="tab-icon">📖</span>
+                        <span class="tab-label">Personal Dictionary</span>
+                    </button>
+                    <button class="tab-btn" id="tab-advanced" role="tab" aria-controls="advanced-tab" aria-selected="false" data-tab="advanced">
+                        <span class="tab-icon">🔧</span>
+                        <span class="tab-label">Advanced</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="options-content">
+                <!-- General Tab -->
+                <div class="tab-content active" id="general-tab" role="tabpanel" aria-labelledby="tab-general">
+                    <h2>General Settings</h2>
+                    
+                    <div class="setting-group">
+                        <label for="language" class="setting-label">Default Language</label>
+                        <select id="language" class="form-control">
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                            <option value="ru">Русский</option>
+                        </select>
+                        <p class="setting-description">Choose your primary writing language</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="auto-correct" class="toggle-input">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">Auto-correct common mistakes</span>
+                        </label>
+                        <p class="setting-description">Automatically fix obvious spelling errors as you type</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">Check delay</label>
+                        <div class="slider-container">
+                            <input type="range" id="check-delay-slider" min="500" max="3000" step="100" value="1000">
+                            <span class="slider-value" id="check-delay-value">1000ms</span>
+                        </div>
+                        <p class="setting-description">Time to wait after you stop typing before checking</p>
+                    </div>
+                </div>
+
+                <!-- Checking Options Tab -->
+                <div class="tab-content" id="checking-tab" role="tabpanel" aria-labelledby="tab-checking">
+                    <h2>Checking Options</h2>
+                    
+                    <div class="settings-section">
+                        <h3>What to check</h3>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="check-spelling" checked>
+                            <span class="checkbox-text">Spelling</span>
+                            <span class="checkbox-description">Check for misspelled words</span>
+                        </label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="check-grammar" checked>
+                            <span class="checkbox-text">Grammar</span>
+                            <span class="checkbox-description">Check for grammatical errors</span>
+                        </label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="check-punctuation" checked>
+                            <span class="checkbox-text">Punctuation</span>
+                            <span class="checkbox-description">Check for punctuation mistakes</span>
+                        </label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="check-style" checked>
+                            <span class="checkbox-text">Style</span>
+                            <span class="checkbox-description">Suggest style improvements</span>
+                        </label>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Advanced checking</h3>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="check-passive-voice">
+                            <span class="checkbox-text">Passive voice</span>
+                            <span class="checkbox-description">Highlight passive voice usage</span>
+                        </label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="check-wordiness">
+                            <span class="checkbox-text">Wordiness</span>
+                            <span class="checkbox-description">Suggest more concise alternatives</span>
+                        </label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="check-cliches">
+                            <span class="checkbox-text">Clichés</span>
+                            <span class="checkbox-description">Identify overused phrases</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Writing Goals Tab -->
+                <div class="tab-content" id="goals-tab" role="tabpanel" aria-labelledby="tab-goals">
+                    <h2>Writing Goals</h2>
+                    
+                    <div class="goals-grid">
+                        <div class="goal-section">
+                            <h3>Tone</h3>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="tone" value="formal">
+                                    <span class="radio-text">Formal</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="tone" value="neutral" checked>
+                                    <span class="radio-text">Neutral</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="tone" value="informal">
+                                    <span class="radio-text">Informal</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="goal-section">
+                            <h3>Audience</h3>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="audience" value="general" checked>
+                                    <span class="radio-text">General</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="audience" value="academic">
+                                    <span class="radio-text">Academic</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="audience" value="business">
+                                    <span class="radio-text">Business</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="goal-section">
+                            <h3>Intent</h3>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="intent" value="inform" checked>
+                                    <span class="radio-text">Inform</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="intent" value="convince">
+                                    <span class="radio-text">Convince</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="intent" value="describe">
+                                    <span class="radio-text">Describe</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Document Types</h3>
+                        <p class="section-description">Get tailored suggestions for specific document types</p>
+                        
+                        <div class="document-types">
+                            <label class="doc-type-card">
+                                <input type="checkbox" name="doc-type" value="email">
+                                <div class="doc-type-content">
+                                    <span class="doc-type-icon">✉️</span>
+                                    <span class="doc-type-label">Email</span>
+                                </div>
+                            </label>
+                            <label class="doc-type-card">
+                                <input type="checkbox" name="doc-type" value="essay">
+                                <div class="doc-type-content">
+                                    <span class="doc-type-icon">📝</span>
+                                    <span class="doc-type-label">Essay</span>
+                                </div>
+                            </label>
+                            <label class="doc-type-card">
+                                <input type="checkbox" name="doc-type" value="report">
+                                <div class="doc-type-content">
+                                    <span class="doc-type-icon">📊</span>
+                                    <span class="doc-type-label">Report</span>
+                                </div>
+                            </label>
+                            <label class="doc-type-card">
+                                <input type="checkbox" name="doc-type" value="creative">
+                                <div class="doc-type-content">
+                                    <span class="doc-type-icon">🎨</span>
+                                    <span class="doc-type-label">Creative</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance Tab -->
+                <div class="tab-content" id="appearance-tab" role="tabpanel" aria-labelledby="tab-appearance">
+                    <h2>Appearance</h2>
+                    
+                    <div class="setting-group">
+                        <label for="highlight-style" class="setting-label">Error highlight style</label>
+                        <select id="highlight-style" class="form-control">
+                            <option value="underline">Underline</option>
+                            <option value="background">Background color</option>
+                            <option value="both">Both</option>
+                        </select>
+                        <p class="setting-description">How errors are displayed in text</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="show-floating-button" checked>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">Show floating button</span>
+                        </label>
+                        <p class="setting-description">Display the Grammar Checker button on web pages</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="sound-enabled">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">Enable sounds</span>
+                        </label>
+                        <p class="setting-description">Play sounds for corrections and notifications</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Error Colors</h3>
+                        <div class="color-settings">
+                            <div class="color-item">
+                                <div class="color-preview spelling"></div>
+                                <span>Spelling errors</span>
+                            </div>
+                            <div class="color-item">
+                                <div class="color-preview grammar"></div>
+                                <span>Grammar errors</span>
+                            </div>
+                            <div class="color-item">
+                                <div class="color-preview punctuation"></div>
+                                <span>Punctuation errors</span>
+                            </div>
+                            <div class="color-item">
+                                <div class="color-preview style"></div>
+                                <span>Style suggestions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sites Tab -->
+                <div class="tab-content" id="sites-tab" role="tabpanel" aria-labelledby="tab-sites">
+                    <h2>Site Management</h2>
+                    
+                    <div class="settings-section">
+                        <h3>Disabled Sites</h3>
+                        <p class="section-description">Grammar Checker won't run on these sites</p>
+                        
+                        <div class="site-input-group">
+                            <input type="text" id="disabled-site-input" class="form-control" placeholder="example.com">
+                            <button class="btn-primary" id="add-disabled-site">Add Site</button>
+                        </div>
+                        
+                        <div class="sites-list" id="disabled-sites-list">
+                            <div class="empty-state">No disabled sites</div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Auto-check Sites</h3>
+                        <p class="section-description">Automatically check text on these sites</p>
+                        
+                        <div class="site-input-group">
+                            <input type="text" id="auto-check-site-input" class="form-control" placeholder="example.com">
+                            <button class="btn-primary" id="add-auto-check-site">Add Site</button>
+                        </div>
+                        
+                        <div class="sites-list" id="auto-check-sites-list">
+                            <div class="site-item">
+                                <span>docs.google.com</span>
+                                <button class="remove-btn">×</button>
+                            </div>
+                            <div class="site-item">
+                                <span>mail.google.com</span>
+                                <button class="remove-btn">×</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Dictionary Tab -->
+                <div class="tab-content" id="dictionary-tab" role="tabpanel" aria-labelledby="tab-dictionary">
+                    <h2>Personal Dictionary</h2>
+                    
+                    <div class="dictionary-header">
+                        <p class="section-description">Add words that should not be marked as misspelled</p>
+                        <span class="dictionary-count" id="dictionary-count">0 words</span>
+                    </div>
+                    
+                    <div class="dictionary-controls">
+                        <div class="word-input-group">
+                            <input type="text" id="dictionary-word-input" class="form-control" placeholder="Add a word...">
+                            <button class="btn-primary" id="add-word-btn">Add Word</button>
+                        </div>
+                        
+                        <button class="btn-secondary" id="clear-dictionary-btn">Clear All</button>
+                    </div>
+                    
+                    <div class="dictionary-list" id="dictionary-list">
+                        <div class="empty-state">No words in your personal dictionary</div>
+                    </div>
+                </div>
+
+                <!-- Advanced Tab -->
+                <div class="tab-content" id="advanced-tab" role="tabpanel" aria-labelledby="tab-advanced">
+                    <h2>Advanced Settings</h2>
+                    
+                    <div class="setting-group">
+                        <label for="cache-size" class="setting-label">Cache size (corrections)</label>
+                        <input type="number" id="cache-size" class="form-control" min="10" max="1000" value="100">
+                        <p class="setting-description">Number of corrections to cache for better performance</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="check-delay" class="setting-label">Check delay (ms)</label>
+                        <input type="number" id="check-delay" class="form-control" min="500" max="5000" step="100" value="1000">
+                        <p class="setting-description">Delay before checking after you stop typing</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="min-word-length" class="setting-label">Minimum word length</label>
+                        <input type="number" id="min-word-length" class="form-control" min="1" max="10" value="3">
+                        <p class="setting-description">Ignore words shorter than this length</p>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Data & Privacy</h3>
+                        
+                        <label class="toggle-label">
+                            <input type="checkbox" id="analytics-enabled" checked>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">Share anonymous usage statistics</span>
+                        </label>
+                        <p class="setting-description">Help improve Grammar Checker by sharing anonymous data</p>
+                        
+                        <div class="data-actions">
+                            <button class="btn-secondary" id="export-data">Export My Data</button>
+                            <button class="btn-danger" id="clear-data">Clear All Data</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Debug</h3>
+                        
+                        <label class="toggle-label">
+                            <input type="checkbox" id="debug-mode">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">Enable debug mode</span>
+                        </label>
+                        <p class="setting-description">Show detailed logs in the console</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="options-footer">
+            <div class="footer-content">
+                <div class="footer-actions">
+                    <button class="btn-primary" id="save-btn">Save Settings</button>
+                    <button class="btn-secondary" id="reset-btn">Reset to Default</button>
+                </div>
+                <div class="footer-info">
+                    <span>Grammar Checker Pro v2.0.0</span>
+                    <span class="separator">•</span>
+                    <a href="#" class="footer-link">Help</a>
+                    <span class="separator">•</span>
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Notification -->
+        <div id="notification" class="notification"></div>
+    </div>
+    
+    <script src="options.js"></script>
+</body>
+</html>
