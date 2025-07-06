@@ -438,18 +438,8 @@ class GrammarCheckerContent {
 // Inicializar cuando el DOM esté listo
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        try {
-            console.log('Initializing GrammarCheckerContent...');
-            new GrammarCheckerContent();
-        } catch (error) {
-            console.error('Error initializing GrammarCheckerContent:', error);
-        }
+        new GrammarCheckerContent();
     });
 } else {
-    try {
-        console.log('Initializing GrammarCheckerContent (DOM already ready)...');
-        new GrammarCheckerContent();
-    } catch (error) {
-        console.error('Error initializing GrammarCheckerContent:', error);
-    }
+    new GrammarCheckerContent();
 }

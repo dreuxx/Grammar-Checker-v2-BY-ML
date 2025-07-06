@@ -195,23 +195,35 @@ class GrammarCheckerBackground {
     
     analyzeErrors(original, corrected) {
         const errors = [];
+        const dmp = new diff_match_patch();
+        const diffs = dmp.diff_main(original, corrected);
+        dmp.diff_cleanupSemantic(diffs);
         
-        // Simple diff implementation to avoid dependency issues
-        if (original === corrected) {
-            return errors;
-        }
+        let position = 0;
         
-        // For now, create a simple error if texts differ
-        if (original.trim() !== corrected.trim()) {
-            errors.push({
-                type: 'grammar',
-                position: 0,
-                length: original.length,
-                original: original,
-                suggestion: corrected,
-                message: `Suggestion: "${corrected}"`,
-                severity: 'medium'
-            });
+        for (let i = 0; i < diffs.length; i++) {
+            const [operation, text] = diffs[i];
+            
+            if (operation === -1) { // Deletion
+                const nextDiff = diffs[i + 1];
+                const isReplacement = nextDiff && nextDiff[0] === 1;
+                
+                errors.push({
+                    type: this.detectErrorType(text, isReplacement ? nextDiff[1] : ''),
+                    position: position,
+                    length: text.length,
+                    original: text,
+                    suggestion: isReplacement ? nextDiff[1] : '',
+                    message: this.getErrorMessage(text, isReplacement ? nextDiff[1] : ''),
+                    severity: this.getErrorSeverity(text, isReplacement ? nextDiff[1] : '')
+                });
+                
+                if (isReplacement) {
+                    i++; // Skip the next diff as we've processed it
+                }
+            } else if (operation === 0) { // Equal
+                position += text.length;
+            }
         }
         
         return errors;
