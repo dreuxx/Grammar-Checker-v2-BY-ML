@@ -15,8 +15,13 @@ class GrammarCheckerContent {
     
     async initialize() {
         // Cargar configuración
-        const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
-        this.settings = response;
+        try {
+            const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
+            this.settings = response || this.getDefaultSettings();
+        } catch (error) {
+            console.log('Failed to get settings from background script, using defaults:', error);
+            this.settings = this.getDefaultSettings();
+        }
         
         // Verificar si está habilitado para este sitio
         if (this.isDisabledSite()) {
@@ -39,7 +44,19 @@ class GrammarCheckerContent {
     
     isDisabledSite() {
         const hostname = window.location.hostname;
-        return this.settings.sites.disabled.some(site => hostname.includes(site));
+        const disabledSites = this.settings?.sites?.disabled || [];
+        return disabledSites.some(site => hostname.includes(site));
+    }
+
+    getDefaultSettings() {
+        return {
+            enabled: true,
+            language: 'es',
+            sites: {
+                disabled: [],
+                autoCheck: ['docs.google.com', 'mail.google.com', 'outlook.com']
+            }
+        };
     }
     
     setupObservers() {
@@ -380,7 +397,8 @@ class GrammarCheckerContent {
     performInitialCheck() {
         // Check automático en sitios configurados
         const hostname = window.location.hostname;
-        if (this.settings.sites.autoCheck.some(site => hostname.includes(site))) {
+        const autoCheckSites = this.settings?.sites?.autoCheck || [];
+        if (autoCheckSites.some(site => hostname.includes(site))) {
             setTimeout(() => {
                 const editableElements = this.textDetector.findEditableElements();
                 editableElements.forEach(element => this.checkElement(element));

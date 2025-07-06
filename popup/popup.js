@@ -15,24 +15,43 @@ class GrammarPopup {
     }
     
     async loadCurrentState() {
-        // Obtener configuración
-        const settings = await chrome.storage.sync.get(['settings']);
-        this.settings = settings.settings || {};
-        
-        // Obtener estado de la pestaña actual
-        const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-        this.currentTab = tab;
-        
-        // Verificar si está habilitado
-        const hostname = new URL(tab.url).hostname;
-        const isDisabled = this.settings.sites?.disabled?.includes(hostname);
-        
-        // Actualizar UI
-        document.getElementById('toggle-switch').checked = !isDisabled;
-        document.getElementById('site-name').textContent = hostname;
-        
-        // Mostrar/ocultar opciones según estado
-        this.updateUIState(!isDisabled);
+        try {
+            // Obtener configuración
+            const settings = await chrome.storage.sync.get(['settings']);
+            this.settings = settings.settings || this.getDefaultSettings();
+            
+            // Obtener estado de la pestaña actual
+            const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+            this.currentTab = tab;
+            
+            // Verificar si está habilitado
+            const hostname = new URL(tab.url).hostname;
+            const isDisabled = this.settings.sites?.disabled?.includes(hostname);
+            
+            // Actualizar UI
+            document.getElementById('toggle-switch').checked = !isDisabled;
+            document.getElementById('site-name').textContent = hostname;
+            
+            // Mostrar/ocultar opciones según estado
+            this.updateUIState(!isDisabled);
+        } catch (error) {
+            console.error('Error loading current state:', error);
+            // Set default values if there's an error
+            this.settings = this.getDefaultSettings();
+            document.getElementById('site-name').textContent = 'unknown';
+            this.updateUIState(true);
+        }
+    }
+
+    getDefaultSettings() {
+        return {
+            enabled: true,
+            language: 'es',
+            sites: {
+                disabled: [],
+                autoCheck: ['docs.google.com', 'mail.google.com', 'outlook.com']
+            }
+        };
     }
     
     setupEventListeners() {
