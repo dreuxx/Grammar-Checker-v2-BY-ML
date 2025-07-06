@@ -19,22 +19,30 @@ class GrammarEditor {
     }
     
     async initialize() {
-        // Configurar editor
-        this.setupEditor();
-        
-        // Cargar configuración
-        await this.loadSettings();
-        
-        // Configurar eventos
-        this.setupEventListeners();
-        
-        // Mensaje inicial si hay texto
-        chrome.runtime.onMessage.addListener((request) => {
-            if (request.action === 'load-text') {
-                this.editor.textContent = request.text;
-                this.analyzeText();
-            }
-        });
+        try {
+            console.log('Initializing editor...');
+            
+            // Configurar editor
+            this.setupEditor();
+            
+            // Cargar configuración
+            await this.loadSettings();
+            
+            // Configurar eventos
+            this.setupEventListeners();
+            
+            // Mensaje inicial si hay texto
+            chrome.runtime.onMessage.addListener((request) => {
+                if (request.action === 'load-text') {
+                    this.editor.textContent = request.text;
+                    this.analyzeText();
+                }
+            });
+            
+            console.log('Editor initialization completed');
+        } catch (error) {
+            console.error('Error initializing editor:', error);
+        }
     }
     
     setupEditor() {
@@ -57,46 +65,90 @@ class GrammarEditor {
     }
     
     async loadSettings() {
-        const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
-        this.currentLanguage = response.language;
-        this.goals = response.goals;
-        
-        // Actualizar UI
-        document.getElementById('language-select').value = this.currentLanguage;
-        this.updateGoalsUI();
+        try {
+            const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
+            this.currentLanguage = response?.language || 'es';
+            this.goals = response?.goals || {};
+            
+            // Actualizar UI
+            const languageSelect = document.getElementById('language-select');
+            if (languageSelect) {
+                languageSelect.value = this.currentLanguage;
+            }
+            this.updateGoalsUI();
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            // Use defaults if settings can't be loaded
+            this.currentLanguage = 'es';
+            this.goals = {};
+        }
     }
     
     setupEventListeners() {
-        // Botón de análisis
-        document.getElementById('analyze-btn').addEventListener('click', () => {
-            this.analyzeText();
-        });
-        
-        // Botón de limpiar
-        document.getElementById('clear-btn').addEventListener('click', () => {
-            if (confirm('¿Está seguro de que desea limpiar todo el texto?')) {
-                this.editor.textContent = '';
-                this.clearAnalysis();
+        try {
+            console.log('Setting up editor event listeners...');
+            
+            // Botón de análisis
+            const analyzeBtn = document.getElementById('analyze-btn');
+            if (analyzeBtn) {
+                analyzeBtn.addEventListener('click', () => {
+                    console.log('Analyze button clicked');
+                    this.analyzeText();
+                });
+            } else {
+                console.error('Analyze button not found');
             }
-        });
-        
-        // Exportar
-        document.getElementById('export-btn').addEventListener('click', () => {
-            this.exportText();
-        });
-        
-        // Cambio de idioma
-        document.getElementById('language-select').addEventListener('change', (e) => {
-            this.currentLanguage = e.target.value;
-            this.analyzeText();
-        });
-        
-        // Objetivos
-        document.querySelectorAll('.goal-selector').forEach(selector => {
-            selector.addEventListener('change', (e) => {
-                this.updateGoal(e.target.name, e.target.value);
+            
+            // Botón de limpiar
+            const clearBtn = document.getElementById('clear-btn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    console.log('Clear button clicked');
+                    if (confirm('¿Está seguro de que desea limpiar todo el texto?')) {
+                        this.editor.textContent = '';
+                        this.clearAnalysis();
+                    }
+                });
+            } else {
+                console.error('Clear button not found');
+            }
+            
+            // Exportar
+            const exportBtn = document.getElementById('export-btn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', () => {
+                    console.log('Export button clicked');
+                    this.exportText();
+                });
+            } else {
+                console.error('Export button not found');
+            }
+            
+            // Cambio de idioma
+            const languageSelect = document.getElementById('language-select');
+            if (languageSelect) {
+                languageSelect.addEventListener('change', (e) => {
+                    console.log('Language changed:', e.target.value);
+                    this.currentLanguage = e.target.value;
+                    this.analyzeText();
+                });
+            } else {
+                console.error('Language select not found');
+            }
+            
+            // Objetivos
+            const goalSelectors = document.querySelectorAll('.goal-selector');
+            goalSelectors.forEach(selector => {
+                selector.addEventListener('change', (e) => {
+                    console.log('Goal updated:', e.target.name, e.target.value);
+                    this.updateGoal(e.target.name, e.target.value);
+                });
             });
-        });
+            
+            console.log('Editor event listeners setup completed');
+        } catch (error) {
+            console.error('Error setting up editor event listeners:', error);
+        }
     }
     
     async analyzeText() {
