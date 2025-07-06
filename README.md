@@ -78,6 +78,15 @@ Create a `models` folder in the project root and place the downloaded `.onnx` fi
 ├── package.json
 └── README.md
 ```
+<img width="804" alt="Screenshot 2025-07-05 at 10 36 20 PM" src="https://github.com/user-attachments/assets/d
+<img width="806" alt="Screenshot 2025-07-05 at 10 36 30 PM" src="https://github.com/user-attachments/assets/ad662b76-2a8c-4c57-af46-92e12529cba5" />
+585a018-945f-45aa-97a0-fc5a76b1af49" />
+<img width="806" alt="Screenshot 2025-07-05 at 10 36 02 PM" src="https://github.com/user-attachments/assets/63e2ccc5-2981-47e0-8f18-6357263319f8" />
+<img width="798" alt="Screenshot 2025-07-05 at 10 36 39 PM" src="https://github.com/user-attachments/assets/e43800a6-8c32-4e7a-8728-380c1b854b0f" />
+<img width="808" alt="Screenshot 2025-07-05 at 10 36 13 PM" src="https://github.com/user-attachments/assets/68c1f8d7-755f-442c-a903-a2b03f2ad13c" />
+<img width="369" alt="Screenshot 2025-07-05 at 10 58 37 PM" src="https://github.com/user-attachments/assets/f0848b7c-2a7a-4739-b546-2e7d3cf2fd8e" />
+
+
 
 #### 4. Install Dependencies
 
