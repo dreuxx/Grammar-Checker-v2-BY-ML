@@ -148,54 +148,76 @@ class TextDetector {
     }
     
     setElementText(element, text, cursorPosition) {
-        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-            const start = element.selectionStart;
-            const end = element.selectionEnd;
-            
-            element.value = text;
-            
-            // Restaurar posición del cursor
-            if (cursorPosition !== undefined) {
-                element.setSelectionRange(cursorPosition, cursorPosition);
-            } else {
-                element.setSelectionRange(start, end);
+        if (!element || typeof text !== 'string') {
+            console.warn('Invalid parameters for setElementText');
+            return;
+        }
+        
+        try {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                const start = element.selectionStart || 0;
+                const end = element.selectionEnd || 0;
+                
+                element.value = text;
+                
+                // Restaurar posición del cursor
+                if (cursorPosition !== undefined && typeof cursorPosition === 'number') {
+                    const safePosition = Math.max(0, Math.min(cursorPosition, text.length));
+                    element.setSelectionRange(safePosition, safePosition);
+                } else {
+                    const safeStart = Math.max(0, Math.min(start, text.length));
+                    const safeEnd = Math.max(0, Math.min(end, text.length));
+                    element.setSelectionRange(safeStart, safeEnd);
+                }
+                
+                // Disparar evento input
+                element.dispatchEvent(new Event('input', { bubbles: true }));
+                
+            } else if (element.contentEditable === 'true' || element.contentEditable === '') {
+                // Para contentEditable es más complejo
+                this.setContentEditableText(element, text, cursorPosition);
             }
-            
-            // Disparar evento input
-            element.dispatchEvent(new Event('input', { bubbles: true }));
-            
-        } else if (element.contentEditable === 'true' || element.contentEditable === '') {
-            // Para contentEditable es más complejo
-            this.setContentEditableText(element, text, cursorPosition);
+        } catch (error) {
+            console.error('Error setting element text:', error);
         }
     }
     
     setContentEditableText(element, text, cursorPosition) {
-        // Guardar selección actual
-        const selection = window.getSelection();
-        const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-        
-        // Actualizar texto
-        element.textContent = text;
-        
-        // Restaurar cursor si es posible
-        if (cursorPosition !== undefined && element.firstChild) {
-            const newRange = document.createRange();
-            const textNode = element.firstChild;
-            
-            try {
-                newRange.setStart(textNode, Math.min(cursorPosition, textNode.length));
-                newRange.setEnd(textNode, Math.min(cursorPosition, textNode.length));
-                
-                selection.removeAllRanges();
-                selection.addRange(newRange);
-            } catch (e) {
-                // Posición inválida
-            }
+        if (!element || typeof text !== 'string') {
+            console.warn('Invalid parameters for setContentEditableText');
+            return;
         }
         
-        // Disparar evento input
-        element.dispatchEvent(new Event('input', { bubbles: true }));
+        try {
+            // Guardar selección actual
+            const selection = window.getSelection();
+            const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+            
+            // Actualizar texto
+            element.textContent = text;
+            
+            // Restaurar cursor si es posible
+            if (cursorPosition !== undefined && typeof cursorPosition === 'number' && element.firstChild) {
+                const newRange = document.createRange();
+                const textNode = element.firstChild;
+                
+                try {
+                    const safePosition = Math.max(0, Math.min(cursorPosition, textNode.length));
+                    newRange.setStart(textNode, safePosition);
+                    newRange.setEnd(textNode, safePosition);
+                    
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                } catch (e) {
+                    console.warn('Could not restore cursor position:', e);
+                }
+            }
+            
+            // Disparar evento input
+            element.dispatchEvent(new Event('input', { bubbles: true }));
+        } catch (error) {
+            console.error('Error setting contentEditable text:', error);
+        }
     }
     
     getCaretPosition(element) {

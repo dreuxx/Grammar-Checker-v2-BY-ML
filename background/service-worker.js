@@ -167,13 +167,17 @@ class GrammarCheckerBackground {
     }
     
     splitIntoSentences(text) {
+        if (!text || typeof text !== 'string') {
+            return [];
+        }
+        
         const sentences = [];
         const regex = /[^.!?]+[.!?]+/g;
         let match;
         
         while ((match = regex.exec(text)) !== null) {
             sentences.push({
-                text: match[0],
+                text: match[0].trim(),
                 offset: match.index
             });
         }
@@ -184,46 +188,59 @@ class GrammarCheckerBackground {
             : 0;
             
         if (lastIndex < text.length) {
-            sentences.push({
-                text: text.substring(lastIndex),
-                offset: lastIndex
-            });
+            const remainingText = text.substring(lastIndex).trim();
+            if (remainingText) {
+                sentences.push({
+                    text: remainingText,
+                    offset: lastIndex
+                });
+            }
         }
         
         return sentences;
     }
     
     analyzeErrors(original, corrected) {
+        if (!original || !corrected || typeof original !== 'string' || typeof corrected !== 'string') {
+            console.warn('Invalid input for error analysis:', { original, corrected });
+            return [];
+        }
+        
         const errors = [];
-        const dmp = new diff_match_patch();
-        const diffs = dmp.diff_main(original, corrected);
-        dmp.diff_cleanupSemantic(diffs);
         
-        let position = 0;
-        
-        for (let i = 0; i < diffs.length; i++) {
-            const [operation, text] = diffs[i];
+        try {
+            const dmp = new diff_match_patch();
+            const diffs = dmp.diff_main(original, corrected);
+            dmp.diff_cleanupSemantic(diffs);
             
-            if (operation === -1) { // Deletion
-                const nextDiff = diffs[i + 1];
-                const isReplacement = nextDiff && nextDiff[0] === 1;
+            let position = 0;
+            
+            for (let i = 0; i < diffs.length; i++) {
+                const [operation, text] = diffs[i];
                 
-                errors.push({
-                    type: this.detectErrorType(text, isReplacement ? nextDiff[1] : ''),
-                    position: position,
-                    length: text.length,
-                    original: text,
-                    suggestion: isReplacement ? nextDiff[1] : '',
-                    message: this.getErrorMessage(text, isReplacement ? nextDiff[1] : ''),
-                    severity: this.getErrorSeverity(text, isReplacement ? nextDiff[1] : '')
-                });
-                
-                if (isReplacement) {
-                    i++; // Skip the next diff as we've processed it
+                if (operation === -1) { // Deletion
+                    const nextDiff = diffs[i + 1];
+                    const isReplacement = nextDiff && nextDiff[0] === 1;
+                    
+                    errors.push({
+                        type: this.detectErrorType(text, isReplacement ? nextDiff[1] : ''),
+                        position: position,
+                        length: text.length,
+                        original: text,
+                        suggestion: isReplacement ? nextDiff[1] : '',
+                        message: this.getErrorMessage(text, isReplacement ? nextDiff[1] : ''),
+                        severity: this.getErrorSeverity(text, isReplacement ? nextDiff[1] : '')
+                    });
+                    
+                    if (isReplacement) {
+                        i++; // Skip the next diff as we've processed it
+                    }
+                } else if (operation === 0) { // Equal
+                    position += text.length;
                 }
-            } else if (operation === 0) { // Equal
-                position += text.length;
             }
+        } catch (error) {
+            console.error('Error analyzing differences:', error);
         }
         
         return errors;
@@ -329,9 +346,13 @@ class GrammarCheckerBackground {
     async updateBadge(tabId) {
         try {
             const tab = await chrome.tabs.get(tabId);
-            const isDisabled = this.settings.sites.disabled.some(site => 
-                tab.url.includes(site)
-            );
+            if (!tab || !tab.url) {
+                return;
+            }
+            
+            const isDisabled = this.settings && this.settings.sites && this.settings.sites.disabled
+                ? this.settings.sites.disabled.some(site => tab.url.includes(site))
+                : false;
             
             chrome.action.setBadgeText({
                 text: isDisabled ? 'OFF' : '',
@@ -343,7 +364,8 @@ class GrammarCheckerBackground {
                 tabId: tabId
             });
         } catch (error) {
-            // Tab might not exist anymore
+            // Tab might not exist anymore or other API error
+            console.warn('Could not update badge for tab:', tabId, error.message);
         }
     }
     

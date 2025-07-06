@@ -358,7 +358,7 @@ export class DOMObserver {
         if (window.crypto && window.crypto.randomUUID) {
             return window.crypto.randomUUID();
         }
-        return `observer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `observer-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     }
     
     /**
