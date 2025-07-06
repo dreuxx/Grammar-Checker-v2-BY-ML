@@ -33,6 +33,18 @@ The performance is measured by the exact-match percentage, which indicates how o
 | German | 32–35% |
 | Russian | 32–35% |
 
+##  Language Performance & Status
+
+The model's performance varies by language due to the complexity and the training data available for each. Based on extensive testing, here is the current status:
+
+| Language | Status | Notes |
+| :--- | :--- | :--- |
+| 🇬🇧 **English** | ✅ **Production-Ready** | Excellent performance. Reliably corrects complex grammar, spelling, and punctuation. |
+| 🇫🇷 **French** | ✅ **Production-Ready** | Excellent performance. Handles complex grammar and accents with high accuracy. |
+| 🇪🇸 **Spanish** | ✔️ **Very Good** | Reliably corrects most grammatical errors. May miss some advanced nuances of verb tenses. |
+| 🇩🇪 **German** | ✔️ **Good** | Corrects complex rules like word order and cases well. May occasionally introduce minor artifacts. |
+| 🇷🇺 **Russian** | 🔶 **Experimental** | Support is in early beta. It may fail to detect many common grammatical errors. |
+
 ## 🛠️ Setup and Installation
 
 Follow these steps to set up the project locally.
