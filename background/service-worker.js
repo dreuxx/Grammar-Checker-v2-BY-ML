@@ -9,18 +9,6 @@ class GrammarCheckerBackground {
         this.settings = this.loadDefaultSettings();
         
         this.initializeExtension();
-        this.loadStoredSettings();
-    }
-
-    async loadStoredSettings() {
-        try {
-            const stored = await chrome.storage.sync.get(['settings']);
-            if (stored.settings) {
-                this.settings = { ...this.settings, ...stored.settings };
-            }
-        } catch (error) {
-            console.log('Failed to load stored settings, using defaults:', error);
-        }
     }
     
     loadDefaultSettings() {
@@ -278,17 +266,6 @@ class GrammarCheckerBackground {
             'capitalization': 'low'
         };
         return severities[type] || 'medium';
-    }
-
-    async getSuggestions(error) {
-        // Return additional suggestions for an error
-        // This could be enhanced to provide context-aware suggestions
-        return {
-            suggestions: [error.suggestion],
-            explanation: this.getErrorMessage(error.original, error.suggestion),
-            type: error.type,
-            confidence: 0.85
-        };
     }
     
     async handleContextMenu(info, tab) {
