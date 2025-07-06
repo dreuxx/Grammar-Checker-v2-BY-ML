@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extension Validation Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-area { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Grammar Checker Extension Test</h1>
+    
+    <div class="test-area">
+        <h3>Test Area 1: Textarea</h3>
+        <textarea id="test-textarea" rows="4" cols="50" placeholder="Type some text with errors here...">This sentense has some grammer mistakes that should be deteceted by the extensio.</textarea>
+    </div>
+    
+    <div class="test-area">
+        <h3>Test Area 2: Contenteditable Div</h3>
+        <div id="test-editable" contenteditable="true" style="border: 1px dashed #999; padding: 10px; min-height: 100px;">
+            Type in this editible area to test grammar checkng functionalaty.
+        </div>
+    </div>
+    
+    <div class="test-area">
+        <h3>Test Results</h3>
+        <div id="results"></div>
+    </div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            results.appendChild(div);
+        }
+        
+        // Test 1: Check if extension is installed
+        addResult('Testing extension presence...', 'info');
+        
+        // Test 2: Check for content script injection
+        setTimeout(() => {
+            const hasContentScript = window.GrammarCheckerContent !== undefined;
+            addResult(`Content script injected: ${hasContentScript}`, hasContentScript ? 'success' : 'error');
+        }, 1000);
+        
+        // Test 3: Check for extension API availability
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            addResult('Chrome extension API available', 'success');
+            
+            // Try to send a message to the background script
+            chrome.runtime.sendMessage({action: 'get-model-status'}, (response) => {
+                if (chrome.runtime.lastError) {
+                    addResult(`Background script error: ${chrome.runtime.lastError.message}`, 'error');
+                } else {
+                    addResult(`Background script responded: ${JSON.stringify(response)}`, 'success');
+                }
+            });
+        } else {
+            addResult('Chrome extension API not available (expected if not running as extension)', 'info');
+        }
+        
+        // Test 4: Check for highlights after typing
+        const textarea = document.getElementById('test-textarea');
+        textarea.addEventListener('input', () => {
+            setTimeout(() => {
+                const highlights = document.querySelectorAll('.grammar-highlight');
+                addResult(`Grammar highlights found: ${highlights.length}`, highlights.length > 0 ? 'success' : 'info');
+            }, 500);
+        });
+        
+        // Test 5: Check popup functionality
+        if (typeof chrome !== 'undefined' && chrome.action) {
+            addResult('Extension action (popup) API available', 'success');
+        }
+        
+        addResult('Extension test page loaded successfully', 'success');
+    </script>
+</body>
+</html>
