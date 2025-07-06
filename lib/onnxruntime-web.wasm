@@ -1,0 +1,10 @@
+This is a placeholder file for onnxruntime-web.wasm
+
+In a real implementation, this would be the WebAssembly binary file from ONNX Runtime.
+
+To get the real file:
+1. Download from: https://www.npmjs.com/package/onnxruntime-web
+2. Or use: npm install onnxruntime-web
+3. Copy the .wasm file from node_modules/onnxruntime-web/dist/
+
+For testing purposes, the mock JavaScript implementation will work without this file.
