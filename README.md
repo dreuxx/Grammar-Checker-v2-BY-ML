@@ -48,8 +48,8 @@ cd Grammar-Checker-v2-BY-ML
 
 The necessary `encoder` and `decoder` models are hosted in the project's **[Releases section](https://github.com/dreuxx/Grammar-Checker-v2-BY-ML/releases)**.
 
-- **Download `encoder_model_int8.onnx` (~273 MB)**
-- **Download `decoder_model_int8.onnx` (~143 MB)**
+- **Download `encoder_model_int8.onnx` (~143 MB)**
+- **Download `decoder_model_int8.onnx` (~273 MB)**
 
 #### 3. Place the Models in the Correct Directory
 
