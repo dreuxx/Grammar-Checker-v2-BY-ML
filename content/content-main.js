@@ -14,9 +14,14 @@ class GrammarCheckerContent {
     }
     
     async initialize() {
-        // Cargar configuración
-        const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
-        this.settings = response;
+        try {
+            // Cargar configuración
+            const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
+            this.settings = response || this.getDefaultSettings();
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            this.settings = this.getDefaultSettings();
+        }
         
         // Verificar si está habilitado para este sitio
         if (this.isDisabledSite()) {
@@ -37,9 +42,21 @@ class GrammarCheckerContent {
         this.performInitialCheck();
     }
     
+    getDefaultSettings() {
+        return {
+            enabled: true,
+            language: 'en',
+            sites: {
+                disabled: [],
+                autoCheck: []
+            }
+        };
+    }
+    
     isDisabledSite() {
         const hostname = window.location.hostname;
-        return this.settings.sites.disabled.some(site => hostname.includes(site));
+        return this.settings && this.settings.sites && this.settings.sites.disabled 
+            && this.settings.sites.disabled.some(site => hostname.includes(site));
     }
     
     setupObservers() {
@@ -59,7 +76,9 @@ class GrammarCheckerContent {
     
     handleDOMChanges(mutations) {
         // Debounce para evitar múltiples checks
-        clearTimeout(this.checkTimeout);
+        if (this.checkTimeout) {
+            clearTimeout(this.checkTimeout);
+        }
         
         this.checkTimeout = setTimeout(() => {
             const editableElements = this.textDetector.findEditableElements();
@@ -68,6 +87,7 @@ class GrammarCheckerContent {
                     this.checkElement(element);
                 }
             });
+            this.checkTimeout = null; // Limpiar referencia
         }, 500);
     }
     
@@ -96,55 +116,105 @@ class GrammarCheckerContent {
                 language: language
             });
             
+            // Verificar si hay error en la respuesta
+            if (results && results.error) {
+                throw new Error(results.error);
+            }
+            
             // Procesar resultados
-            this.processResults(element, results);
+            if (results && Array.isArray(results)) {
+                this.processResults(element, results);
+            }
             
         } catch (error) {
             console.error('Error checking element:', error);
+            // Notificar al usuario solo para errores críticos
+            if (error.message && !error.message.includes('Extension context invalidated')) {
+                this.showErrorNotification('Grammar check failed', error.message);
+            }
         } finally {
             element.removeAttribute('data-grammar-checking');
         }
     }
     
     detectLanguage(text) {
-        // Detección simple basada en caracteres
+        // Detección simple basada en caracteres específicos
         // En producción usar una librería especializada
-        if (/[а-яА-Я]/.test(text)) return 'ru';
-        if (/[äöüßÄÖÜ]/.test(text)) return 'de';
-        if (/[àèìòùÀÈÌÒÙáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛ]/.test(text)) {
-            return text.includes('ñ') ? 'es' : 'fr';
+        const sample = text.substring(0, 200).toLowerCase(); // Analizar solo una muestra
+        
+        // Detectar cirílico (ruso)
+        if (/[а-яё]/.test(sample)) return 'ru';
+        
+        // Detectar alemán por caracteres específicos (más específicos)
+        if (/[äöüß]/.test(sample) || /\b(das|der|die|und|ist|ein|eine)\b/.test(sample)) return 'de';
+        
+        // Detectar francés por acentos específicos y palabras comunes
+        if (/[àâäéèêëïîôöùûüÿç]/.test(sample) || /\b(le|la|les|est|un|une|ce|cette)\b/.test(sample)) {
+            // Si no tiene ñ, probablemente es francés
+            if (!/ñ/.test(sample)) return 'fr';
         }
-        return this.settings.language || 'en';
+        
+        // Si contiene ñ es definitivamente español
+        if (/ñ/.test(sample)) return 'es';
+        
+        // Detectar español por acentos específicos y palabras comunes
+        if (/[áéíóúü]/.test(sample) || /\b(el|la|los|las|es|un|una|esto|esta)\b/.test(sample)) {
+            // Verificar que no tenga caracteres franceses específicos
+            if (!/[àâäêëïîôöùûü]/.test(sample)) {
+                return 'es';
+            }
+        }
+        
+        // Fallback a configuración del usuario o inglés
+        return this.settings?.language || 'en';
     }
     
     processResults(element, results) {
+        // Validar entrada
+        if (!element || !results || !Array.isArray(results)) {
+            console.warn('Invalid results or element for processing');
+            return;
+        }
+        
         // Limpiar errores anteriores para este elemento
         this.clearElementErrors(element);
         
         results.forEach(result => {
-            result.errors.forEach(error => {
-                const errorId = this.generateErrorId();
-                
-                // Guardar error
-                this.currentErrors.set(errorId, {
-                    element: element,
-                    error: error,
-                    result: result
+            if (result && result.errors && Array.isArray(result.errors)) {
+                result.errors.forEach(error => {
+                    if (error && typeof error.position === 'number' && typeof error.length === 'number') {
+                        const errorId = this.generateErrorId();
+                        
+                        // Guardar error
+                        this.currentErrors.set(errorId, {
+                            element: element,
+                            error: error,
+                            result: result
+                        });
+                        
+                        // Resaltar error
+                        try {
+                            this.highlighter.highlightError(
+                                element,
+                                error.position + (result.offset || 0),
+                                error.length,
+                                error.type || 'unknown',
+                                errorId
+                            );
+                        } catch (highlightError) {
+                            console.error('Error highlighting:', highlightError);
+                            // Eliminar error del mapa si no se puede resaltar
+                            this.currentErrors.delete(errorId);
+                        }
+                    }
                 });
-                
-                // Resaltar error
-                this.highlighter.highlightError(
-                    element,
-                    error.position + result.offset,
-                    error.length,
-                    error.type,
-                    errorId
-                );
-            });
+            }
         });
         
         // Actualizar contador en el botón flotante
-        this.floatingButton.updateCount(this.currentErrors.size);
+        if (this.floatingButton && this.floatingButton.updateCount) {
+            this.floatingButton.updateCount(this.currentErrors.size);
+        }
     }
     
     clearElementErrors(element) {
@@ -160,7 +230,7 @@ class GrammarCheckerContent {
     }
     
     generateErrorId() {
-        return `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `error-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     }
     
     setupEventListeners() {
@@ -200,9 +270,12 @@ class GrammarCheckerContent {
         this.clearElementErrors(element);
         
         // Programar nuevo check después de que deje de escribir
-        clearTimeout(element.checkTimeout);
+        if (element.checkTimeout) {
+            clearTimeout(element.checkTimeout);
+        }
         element.checkTimeout = setTimeout(() => {
             this.checkElement(element);
+            element.checkTimeout = null; // Limpiar referencia
         }, 1000);
     }
     
@@ -231,7 +304,7 @@ class GrammarCheckerContent {
         this.suggestionCard.showPreview(errorData.error);
     }
     
-    acceptSuggestion(errorId) {
+    async acceptSuggestion(errorId) {
         const errorData = this.currentErrors.get(errorId);
         if (!errorData) return;
         
@@ -248,13 +321,19 @@ class GrammarCheckerContent {
         this.suggestionCard.hide();
         
         // Actualizar contador
-        this.floatingButton.updateCount(this.currentErrors.size);
+        if (this.floatingButton && this.floatingButton.updateCount) {
+            this.floatingButton.updateCount(this.currentErrors.size);
+        }
         
-        // Tracking
-        chrome.runtime.sendMessage({
-            action: 'update-stats',
-            stats: { correctionsAccepted: 1 }
-        });
+        // Tracking con manejo de errores
+        try {
+            await chrome.runtime.sendMessage({
+                action: 'update-stats',
+                stats: { correctionsAccepted: 1 }
+            });
+        } catch (error) {
+            console.warn('Failed to update stats:', error);
+        }
     }
     
     applyCorrection(element, error, result) {
@@ -267,7 +346,7 @@ class GrammarCheckerContent {
         this.textDetector.setElementText(element, newText, error.position + result.offset + error.suggestion.length);
     }
     
-    ignoreSuggestion(errorId) {
+    async ignoreSuggestion(errorId) {
         // Marcar como ignorado temporalmente
         const highlight = document.querySelector(`[data-error-id="${errorId}"]`);
         if (highlight) {
@@ -276,29 +355,40 @@ class GrammarCheckerContent {
         
         this.suggestionCard.hide();
         
-        // Tracking
-        chrome.runtime.sendMessage({
-            action: 'update-stats',
-            stats: { correctionsIgnored: 1 }
-        });
+        // Tracking con manejo de errores
+        try {
+            await chrome.runtime.sendMessage({
+                action: 'update-stats',
+                stats: { correctionsIgnored: 1 }
+            });
+        } catch (error) {
+            console.warn('Failed to update stats:', error);
+        }
     }
     
     async addToDictionary(word) {
-        await chrome.runtime.sendMessage({
-            action: 'add-to-dictionary',
-            word: word
-        });
-        
-        // Eliminar todos los errores de esa palabra
-        for (const [id, errorData] of this.currentErrors) {
-            if (errorData.error.original.toLowerCase() === word.toLowerCase()) {
-                this.highlighter.removeHighlight(id);
-                this.currentErrors.delete(id);
+        try {
+            await chrome.runtime.sendMessage({
+                action: 'add-to-dictionary',
+                word: word
+            });
+            
+            // Eliminar todos los errores de esa palabra
+            for (const [id, errorData] of this.currentErrors) {
+                if (errorData.error.original.toLowerCase() === word.toLowerCase()) {
+                    this.highlighter.removeHighlight(id);
+                    this.currentErrors.delete(id);
+                }
             }
+            
+            this.suggestionCard.hide();
+            if (this.floatingButton && this.floatingButton.updateCount) {
+                this.floatingButton.updateCount(this.currentErrors.size);
+            }
+        } catch (error) {
+            console.error('Failed to add word to dictionary:', error);
+            this.showErrorNotification('Dictionary Error', 'Failed to add word to dictionary');
         }
-        
-        this.suggestionCard.hide();
-        this.floatingButton.updateCount(this.currentErrors.size);
     }
     
     showAllErrors() {
@@ -380,12 +470,49 @@ class GrammarCheckerContent {
     performInitialCheck() {
         // Check automático en sitios configurados
         const hostname = window.location.hostname;
-        if (this.settings.sites.autoCheck.some(site => hostname.includes(site))) {
+        if (this.settings && this.settings.sites && this.settings.sites.autoCheck 
+            && this.settings.sites.autoCheck.some(site => hostname.includes(site))) {
             setTimeout(() => {
                 const editableElements = this.textDetector.findEditableElements();
                 editableElements.forEach(element => this.checkElement(element));
             }, 2000);
         }
+    }
+    
+    showErrorNotification(title, message) {
+        // Mostrar notificación discreta al usuario
+        const notification = document.createElement('div');
+        notification.className = 'grammar-error-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #f44336;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-size: 14px;
+            max-width: 300px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
+        notification.innerHTML = `
+            <div style="font-weight: bold; margin-bottom: 4px;">${title}</div>
+            <div style="font-size: 12px; opacity: 0.9;">${message}</div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Mostrar con animación
+        setTimeout(() => notification.style.opacity = '1', 10);
+        
+        // Ocultar después de 5 segundos
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
     }
     
     handleMessage(request, sender, sendResponse) {
@@ -411,6 +538,21 @@ class GrammarCheckerContent {
     }
     
     disable() {
+        // Limpiar timeouts activos
+        if (this.checkTimeout) {
+            clearTimeout(this.checkTimeout);
+            this.checkTimeout = null;
+        }
+        
+        // Limpiar timeouts de elementos individuales
+        const editableElements = this.textDetector.findEditableElements();
+        editableElements.forEach(element => {
+            if (element.checkTimeout) {
+                clearTimeout(element.checkTimeout);
+                element.checkTimeout = null;
+            }
+        });
+        
         // Limpiar todo
         this.observer?.disconnect();
         this.highlighter.clearAllHighlights();

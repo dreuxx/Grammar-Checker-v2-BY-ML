@@ -57,13 +57,23 @@ class GrammarEditor {
     }
     
     async loadSettings() {
-        const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
-        this.currentLanguage = response.language;
-        this.goals = response.goals;
-        
-        // Actualizar UI
-        document.getElementById('language-select').value = this.currentLanguage;
-        this.updateGoalsUI();
+        try {
+            const response = await chrome.runtime.sendMessage({ action: 'get-settings' });
+            this.currentLanguage = response?.language || 'en';
+            this.goals = response?.goals || { tone: 'neutral', audience: 'general', intent: 'inform' };
+            
+            // Actualizar UI
+            const languageSelect = document.getElementById('language-select');
+            if (languageSelect) {
+                languageSelect.value = this.currentLanguage;
+            }
+            this.updateGoalsUI();
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            // Usar valores por defecto
+            this.currentLanguage = 'en';
+            this.goals = { tone: 'neutral', audience: 'general', intent: 'inform' };
+        }
     }
     
     setupEventListeners() {
@@ -149,9 +159,23 @@ class GrammarEditor {
     
     highlightError(error, offset) {
         const text = this.editor.innerText;
-        const before = text.substring(0, error.position + offset);
-        const errorText = text.substring(error.position + offset, error.position + offset + error.length);
-        const after = text.substring(error.position + offset + error.length);
+        const position = error.position + (offset || 0);
+        
+        // Validar posición
+        if (position < 0 || position >= text.length || error.length <= 0) {
+            console.warn('Invalid error position or length:', { position, length: error.length, textLength: text.length });
+            return;
+        }
+        
+        const before = text.substring(0, position);
+        const errorText = text.substring(position, position + error.length);
+        const after = text.substring(position + error.length);
+        
+        // Validar que el texto del error no esté vacío
+        if (!errorText) {
+            console.warn('Empty error text at position:', position);
+            return;
+        }
         
         // Crear span con error
         const errorSpan = document.createElement('span');
@@ -161,13 +185,18 @@ class GrammarEditor {
         
         // Reemplazar contenido manteniendo formato
         const range = document.createRange();
-        const textNode = this.getTextNodeAtOffset(error.position + offset);
+        const textNode = this.getTextNodeAtOffset(position);
         
         if (textNode) {
-            range.setStart(textNode, error.position);
-            range.setEnd(textNode, error.position + error.length);
-            range.deleteContents();
-            range.insertNode(errorSpan);
+            try {
+                const nodeOffset = position - this.getTextOffset(textNode);
+                range.setStart(textNode, Math.max(0, nodeOffset));
+                range.setEnd(textNode, Math.min(textNode.textContent.length, nodeOffset + error.length));
+                range.deleteContents();
+                range.insertNode(errorSpan);
+            } catch (rangeError) {
+                console.error('Error creating range:', rangeError);
+            }
         }
     }
     
@@ -191,6 +220,28 @@ class GrammarEditor {
         }
         
         return null;
+    }
+    
+    getTextOffset(targetNode) {
+        // Obtener el offset de un nodo de texto específico
+        const walker = document.createTreeWalker(
+            this.editor,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+        );
+        
+        let currentOffset = 0;
+        let node;
+        
+        while (node = walker.nextNode()) {
+            if (node === targetNode) {
+                return currentOffset;
+            }
+            currentOffset += node.textContent.length;
+        }
+        
+        return 0;
     }
     
     clearHighlights() {
@@ -274,10 +325,16 @@ class GrammarEditor {
     }
     
     applyCorrection(index) {
+        // Validar índice
+        if (index < 0 || index >= this.errors.length) {
+            console.warn('Invalid error index:', index);
+            return;
+        }
+        
         const error = this.errors[index];
         const errorSpan = this.editor.querySelector(`[data-error-index="${index}"]`);
         
-        if (errorSpan) {
+        if (errorSpan && error && error.suggestion) {
             errorSpan.textContent = error.suggestion;
             errorSpan.classList.remove('error-highlight', `error-${error.type}`);
             errorSpan.classList.add('corrected');
@@ -295,6 +352,12 @@ class GrammarEditor {
     }
     
     scrollToError(index) {
+        // Validar índice
+        if (index < 0 || index >= this.errors.length) {
+            console.warn('Invalid error index for scrolling:', index);
+            return;
+        }
+        
         const errorSpan = this.editor.querySelector(`[data-error-index="${index}"]`);
         if (errorSpan) {
             errorSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -382,23 +445,40 @@ class GrammarEditor {
     }
     
     updateGoalsUI() {
-        // Actualizar selectores de objetivos
-        document.querySelector(`[name="tone"][value="${this.goals.tone}"]`).checked = true;
-        document.querySelector(`[name="audience"][value="${this.goals.audience}"]`).checked = true;
-        document.querySelector(`[name="intent"][value="${this.goals.intent}"]`).checked = true;
+        // Actualizar selectores de objetivos con validación
+        try {
+            const toneSelector = document.querySelector(`[name="tone"][value="${this.goals.tone}"]`);
+            if (toneSelector) toneSelector.checked = true;
+            
+            const audienceSelector = document.querySelector(`[name="audience"][value="${this.goals.audience}"]`);
+            if (audienceSelector) audienceSelector.checked = true;
+            
+            const intentSelector = document.querySelector(`[name="intent"][value="${this.goals.intent}"]`);
+            if (intentSelector) intentSelector.checked = true;
+        } catch (error) {
+            console.error('Error updating goals UI:', error);
+        }
     }
     
     updateGoal(type, value) {
+        if (!this.goals) {
+            this.goals = {};
+        }
+        
         this.goals[type] = value;
         
         // Guardar en configuración
-        chrome.runtime.sendMessage({
-            action: 'update-settings',
-            settings: { goals: this.goals }
-        });
-        
-        // Re-analizar con nuevos objetivos
-        this.analyzeText();
+        try {
+            chrome.runtime.sendMessage({
+                action: 'update-settings',
+                settings: { goals: this.goals }
+            });
+            
+            // Re-analizar con nuevos objetivos
+            this.analyzeText();
+        } catch (error) {
+            console.error('Error updating goal:', error);
+        }
     }
     
     exportText() {
